@@ -1,4 +1,5 @@
-// Фабрика (Factory) — це патерн програмування, який надає загальний клас для створення об'єктів, який враховує
+// Фабрика (Factory) — це патерн програмування, який надає загальний клас для створення
+// об'єктів, який враховує
 // передані аргументи та вирішує який клас повинен мати об’єкт при створенні
 // Клас Book описує книгу в магазині
 class Book {
@@ -10,8 +11,19 @@ class Book {
    */
   /**
    * Метод describe генерує опис книги
-   *  Повертає рядок у форматі: "Книга: '{назва}', автор: '{автор}', колір обкладинки: '{колір}'"
+   *  Повертає рядок у форматі:
+   * "Книга: '{назва}', автор: '{автор}', колір обкладинки: '{колір}'"
    */
+
+  constructor({ title, author, coverColor }) {
+    this.title = title;
+    this.author = author;
+    this.coverColor = coverColor;
+  }
+
+  describe() {
+    return `Книга: ${this.title}, автор: ${this.author}, колір обкладинки: ${this.coverColor}`;
+  }
 }
 
 /**
@@ -28,6 +40,16 @@ class AudioBook {
      * Метод describe генерує опис аудіокниги
        Повертає рядок у форматі: "Аудіокнига: '{назва}', автор: '{автор}', тривалість: '{тривалість}'"
      */
+
+  constructor({ title, author, audioLength }) {
+    this.title = title;
+    this.author = author;
+    this.audioLength = audioLength;
+  }
+
+  describe() {
+    return `Аудіокнига: ${this.title}, автор: ${this.author}, тривалість: ${this.audioLength}`;
+  }
 }
 
 /**
@@ -47,39 +69,57 @@ class ProductFactory {
    *
    * В залежності від типу, повертає або екземпляр класу Book, або AudioBook.
    *
-   *  Кидає помилку, якщо переданий тип не підтримується `Такого типу продукту не існує: ${type}`.
+   *  Кидає помилку, якщо переданий тип не підтримується
+   * `Такого типу продукту не існує: ${type}`.
    */
+
+  static TYPE = {
+    BOOK: "book",
+    AUDIOBOOK: "audiobook",
+  };
+
+  static createProduct(type, options) {
+    if (options.coverColor) {
+      return new Book(options);
+    }
+
+    if (options.audioLength) {
+      return new AudioBook(options);
+    }
+
+    throw new Error(`Такого типу продукту не існує: ${type}`);
+  }
 }
 console.log("Завдання 2 ====================================");
 // Після виконання розкоментуйте код нижче
 
 // Використовуємо ProductFactory для створення нової книги
-// const factoryBook = ProductFactory.createProduct(ProductFactory.TYPE.BOOK, {
-//   title: "Назва книги",
-//   author: "Автор книги",
-//   coverColor: "Синій",
-// });
+const factoryBook = ProductFactory.createProduct(ProductFactory.TYPE.BOOK, {
+  title: "Назва книги",
+  author: "Автор книги",
+  coverColor: "Синій",
+});
 
 // Виводимо в консоль опис нової книги
-// console.log(factoryBook.describe());
+console.log(factoryBook.describe());
 
 // Використовуємо ProductFactory для створення нової аудіокниги
-// const factoryAudiobook = ProductFactory.createProduct(
-//   ProductFactory.TYPE.AUDIOBOOK,
-//   {
-//     title: "Назва аудіокниги",
-//     author: "Автор аудіокниги ",
-//     audioLength: "5 годин",
-//   }
-// );
+const factoryAudiobook = ProductFactory.createProduct(
+  ProductFactory.TYPE.AUDIOBOOK,
+  {
+    title: "Назва аудіокниги",
+    author: "Автор аудіокниги",
+    audioLength: "5 годин",
+  }
+);
 
 // Виводимо в консоль опис нової аудіокниги
-// console.log(factoryAudiobook.describe());
+console.log(factoryAudiobook.describe());
 
 // Спробуємо створити продукт непідтримуваного типу
-// try {
-//   const factoryUnknown = ProductFactory.createProduct("comics", {});
-// } catch (error) {
-//   // Виводимо помилку в консоль
-//   console.error(error.message);
-// }
+try {
+  const factoryUnknown = ProductFactory.createProduct("comics", {});
+} catch (error) {
+  // Виводимо помилку в консоль
+  console.error(error.message);
+}
